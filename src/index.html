@@ -30,11 +30,43 @@
             align-items: center;
             min-height: 100vh;
             padding: 40px 20px;
+            position: relative;
+        }
+
+        .api-key-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--banana-yellow-dark);
+            color: var(--white);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .api-key-button:hover {
+            background-color: var(--banana-yellow);
+            transform: translateY(-1px);
+        }
+
+        .api-key-button svg {
+            width: 16px;
+            height: 16px;
         }
 
         .app-header {
             text-align: center;
             margin-bottom: 40px;
+            width: 100%;
+            max-width: 800px;
         }
 
         .app-title {
@@ -209,10 +241,139 @@
             margin: 20px 0;
             font-size: 16px;
         }
+
+        /* API Key Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background-color: var(--white);
+            border-radius: 18px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--black);
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            border: 2px solid #E6E6E6;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--banana-yellow-dark);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .modal-save {
+            flex: 1;
+            padding: 12px;
+            background-color: var(--banana-yellow-dark);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-save:hover {
+            background-color: var(--banana-yellow);
+        }
+
+        .modal-cancel {
+            flex: 1;
+            padding: 12px;
+            background-color: #F2F2F7;
+            color: var(--black);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-cancel:hover {
+            background-color: #E5E5EA;
+        }
+
+        .api-key-instructions {
+            font-size: 14px;
+            color: var(--gray);
+            line-height: 1.5;
+        }
     </style>
 </head>
 
 <body>
+    <!-- API Key 设置按钮 -->
+    <button class="api-key-button" id="apiKeyButton">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 15v-3m0-3V6m8 9a8 8 0 11-16 0 8 8 0 0116 0z"></path>
+        </svg>
+        API Key
+    </button>
+
     <div class="app-header">
         <h1 class="app-title">banana-magazine</h1>
         <p class="app-subtitle">小红书封面生成器</p>
@@ -242,11 +403,41 @@
         <button class="retry-button" id="retryButton">重新生成</button>
     </div>
 
+    <!-- API Key Modal -->
+    <div class="modal-overlay" id="apiKeyModal">
+        <div class="modal">
+            <button class="modal-close" id="modalClose">×</button>
+            <h2 class="modal-title">设置 Gemini API Key</h2>
+            <div class="modal-form">
+                <div class="form-group">
+                    <label class="form-label" for="apiKeyInput">Gemini API Key</label>
+                    <input type="password" class="form-input" id="apiKeyInput" placeholder="输入你的 Gemini API Key">
+                    <div class="api-key-instructions">
+                        如何获取 API Key：<br>
+                        1. 访问 Google AI Studio (https://makersuite.google.com/)<br>
+                        2. 创建或选择一个项目<br>
+                        3. 点击 "Get API Key" 获取密钥
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-cancel" id="modalCancel">取消</button>
+                    <button class="modal-save" id="modalSave">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 配置你的 Gemini API Key
-        const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE'; // 请替换为你的实际API密钥
+        // 从 localStorage 读取已保存的 API Key
+        let GEMINI_API_KEY = localStorage.getItem('geminiApiKey') || '';
 
         // DOM 元素
+        const apiKeyButton = document.getElementById('apiKeyButton');
+        const apiKeyModal = document.getElementById('apiKeyModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalCancel = document.getElementById('modalCancel');
+        const modalSave = document.getElementById('modalSave');
+        const apiKeyInput = document.getElementById('apiKeyInput');
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const loading = document.getElementById('loading');
@@ -256,10 +447,47 @@
         const retryButton = document.getElementById('retryButton');
         const errorMessage = document.getElementById('errorMessage');
 
+        // 初始化 API Key 输入框
+        apiKeyInput.value = GEMINI_API_KEY;
+
+        // 打开 API Key 设置模态框
+        apiKeyButton.addEventListener('click', () => {
+            apiKeyModal.style.display = 'flex';
+            apiKeyInput.focus();
+        });
+
+        // 关闭模态框
+        function closeModal() {
+            apiKeyModal.style.display = 'none';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalCancel.addEventListener('click', closeModal);
+
+        // 点击模态框外关闭
+        apiKeyModal.addEventListener('click', (e) => {
+            if (e.target === apiKeyModal) {
+                closeModal();
+            }
+        });
+
+        // 保存 API Key
+        modalSave.addEventListener('click', () => {
+            const newApiKey = apiKeyInput.value.trim();
+            if (newApiKey) {
+                GEMINI_API_KEY = newApiKey;
+                localStorage.setItem('geminiApiKey', newApiKey);
+                closeModal();
+                showMessage('API Key 已保存！', 'success');
+            } else {
+                showMessage('请输入有效的 API Key', 'error');
+            }
+        });
+
         // 拖拽事件处理
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            uploadArea.style.borderColor = var(--banana - yellow);
+            uploadArea.style.borderColor = 'var(--banana-yellow)';
             uploadArea.style.backgroundColor = 'rgba(255, 225, 53, 0.3)';
         });
 
@@ -296,6 +524,13 @@
 
         // 处理文件上传
         async function handleFile(file) {
+            // 检查是否已设置 API Key
+            if (!GEMINI_API_KEY) {
+                showError('请先设置 Gemini API Key！');
+                apiKeyModal.style.display = 'flex';
+                return;
+            }
+
             if (!file.type.startsWith('image/')) {
                 showError('请上传图片文件');
                 return;
@@ -367,7 +602,14 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    const errorData = await response.json();
+                    if (response.status === 401) {
+                        showError('API Key 无效，请重新设置');
+                        apiKeyModal.style.display = 'flex';
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${JSON.stringify(errorData)}`);
+                    }
+                    return;
                 }
 
                 const data = await response.json();
@@ -413,11 +655,51 @@
             errorMessage.style.display = 'block';
         }
 
+        // 显示消息（成功或错误）
+        function showMessage(message, type) {
+            const tempMessage = document.createElement('div');
+            tempMessage.textContent = message;
+            tempMessage.style.position = 'fixed';
+            tempMessage.style.top = '20px';
+            tempMessage.style.left = '50%';
+            tempMessage.style.transform = 'translateX(-50%)';
+            tempMessage.style.padding = '12px 24px';
+            tempMessage.style.borderRadius = '12px';
+            tempMessage.style.color = 'white';
+            tempMessage.style.fontWeight = '500';
+            tempMessage.style.zIndex = '1001';
+            tempMessage.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+
+            if (type === 'error') {
+                tempMessage.style.backgroundColor = '#ff3b30';
+            } else {
+                tempMessage.style.backgroundColor = 'var(--banana-yellow-dark)';
+            }
+
+            document.body.appendChild(tempMessage);
+
+            // 3秒后移除
+            setTimeout(() => {
+                tempMessage.style.opacity = '0';
+                tempMessage.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    document.body.removeChild(tempMessage);
+                }, 500);
+            }, 3000);
+        }
+
         // 重置到上传状态
         function resetToUploadState() {
             loading.style.display = 'none';
             uploadArea.style.display = 'flex';
         }
+
+        // 页面加载时检查 API Key
+        window.addEventListener('load', () => {
+            if (!GEMINI_API_KEY) {
+                showMessage('请先设置 Gemini API Key', 'error');
+            }
+        });
     </script>
 </body>
 
