@@ -13,6 +13,7 @@
             --white: #FFFFFF;
             --black: #1D1D1F;
             --gray: #86868B;
+            --light-gray: #F2F2F7;
         }
 
         * {
@@ -66,12 +67,12 @@
             text-align: center;
             margin-bottom: 40px;
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
         }
 
         .app-title {
-            font-size: 32px;
-            font-weight: 600;
+            font-size: 72px;
+            font-weight: 800;
             color: var(--banana-yellow-dark);
             margin-bottom: 8px;
         }
@@ -84,7 +85,7 @@
 
         .card {
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
             background-color: var(--white);
             border-radius: 18px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -104,6 +105,59 @@
             border-radius: 18px 18px 0 0;
         }
 
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .templates-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .template-card {
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-card.selected {
+            border-color: var(--banana-yellow-dark);
+            box-shadow: 0 0 0 3px var(--banana-yellow-light);
+        }
+
+        .template-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .template-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px;
+            font-size: 12px;
+            text-align: center;
+        }
+
         .upload-area {
             width: 100%;
             height: 300px;
@@ -118,11 +172,64 @@
             background-color: var(--banana-yellow-light);
             position: relative;
             overflow: hidden;
+            margin-bottom: 30px;
         }
 
         .upload-area:hover {
             background-color: rgba(255, 225, 53, 0.3);
             border-color: var(--banana-yellow);
+        }
+
+        .upload-preview {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 10px;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .upload-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            transition: opacity 0.3s ease;
+        }
+
+        .upload-area:hover .upload-overlay {
+            display: flex;
+        }
+
+        .upload-overlay-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
         }
 
         .upload-icon {
@@ -151,6 +258,32 @@
             left: 0;
             opacity: 0;
             cursor: pointer;
+        }
+
+        .generate-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--banana-yellow-dark);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .generate-button:hover {
+            background-color: var(--banana-yellow);
+            transform: translateY(-2px);
+        }
+
+        .generate-button:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+            transform: none;
         }
 
         .loading {
@@ -361,6 +494,28 @@
             color: var(--gray);
             line-height: 1.5;
         }
+
+        .instructions {
+            background-color: var(--light-gray);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: var(--banana-yellow-dark);
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 
@@ -375,17 +530,31 @@
     </button>
 
     <div class="app-header">
-        <h1 class="app-title">banana-magazine</h1>
+        <h1 class="app-title">Nano Banana Magazine</h1>
         <p class="app-subtitle">小红书封面生成器</p>
     </div>
 
     <div class="card">
+        <h2 class="section-title">选择杂志模板</h2>
+        <div class="templates-container" id="templatesContainer">
+            <!-- 模板将通过JavaScript动态生成 -->
+        </div>
+
+        <h2 class="section-title">上传你的图片</h2>
         <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">🍌</div>
-            <div class="upload-text">拖拽图片到这里</div>
-            <div class="upload-subtext">或点击选择图片文件</div>
+            <img class="upload-preview" id="uploadPreview" alt="预览图片">
+            <div class="upload-content" id="uploadContent">
+                <div class="upload-icon">🍌</div>
+                <div class="upload-text">拖拽图片到这里</div>
+                <div class="upload-subtext">或点击选择图片文件</div>
+            </div>
+            <div class="upload-overlay" id="uploadOverlay">
+                <div class="upload-overlay-text">点击更换图片</div>
+            </div>
             <input type="file" class="file-input" id="fileInput" accept="image/*">
         </div>
+
+        <button class="generate-button" id="generateButton" disabled>生成小红书封面</button>
 
         <div class="loading" id="loading">
             <div class="loading-spinner"></div>
@@ -401,6 +570,17 @@
         </div>
 
         <button class="retry-button" id="retryButton">重新生成</button>
+
+        <div class="instructions">
+            <h3>使用说明</h3>
+            <ul>
+                <li>选择一个杂志模板作为风格参考</li>
+                <li>上传你的图片（人物或物品照片效果最佳）</li>
+                <li>点击"生成小红书封面"按钮</li>
+                <li>系统会根据模板风格重新设计你的图片</li>
+                <li>生成的封面将保留模板的排版、字体和设计风格</li>
+            </ul>
+        </div>
     </div>
 
     <!-- API Key Modal -->
@@ -414,7 +594,7 @@
                     <input type="password" class="form-input" id="apiKeyInput" placeholder="输入你的 Gemini API Key">
                     <div class="api-key-instructions">
                         如何获取 API Key：<br>
-                        1. 访问 Google AI Studio (https://makersuite.google.com/)<br>
+                        1. 访问 Google AI Studio (https://makersuite.google.com/ )<br>
                         2. 创建或选择一个项目<br>
                         3. 点击 "Get API Key" 获取密钥
                     </div>
@@ -431,6 +611,21 @@
         // 从 localStorage 读取已保存的 API Key
         let GEMINI_API_KEY = localStorage.getItem('geminiApiKey') || '';
 
+        // 杂志模板数据
+        const magazineTemplates = [
+            { id: 'forbes', name: 'Forbes', image: 'assets/images/forbes-cover.jpg' },
+            { id: 'national-geographic', name: 'National Geographic', image: 'assets/images/national-geographic-cover.jpg' },
+            { id: 'rolling-stone', name: 'Rolling Stone', image: 'assets/images/rolling-stone-cover.jpg' },
+            { id: 'science', name: 'Science', image: 'assets/images/science-cover.jpg' },
+            { id: 'time', name: 'Time', image: 'assets/images/time-cover.jpg' },
+            { id: 'vogue', name: 'Vogue', image: 'assets/images/vogue-cover.jpg' }
+        ];
+
+        // 当前选中的模板
+        let selectedTemplate = null;
+        // 当前上传的文件
+        let uploadedFile = null;
+
         // DOM 元素
         const apiKeyButton = document.getElementById('apiKeyButton');
         const apiKeyModal = document.getElementById('apiKeyModal');
@@ -438,8 +633,13 @@
         const modalCancel = document.getElementById('modalCancel');
         const modalSave = document.getElementById('modalSave');
         const apiKeyInput = document.getElementById('apiKeyInput');
+        const templatesContainer = document.getElementById('templatesContainer');
         const uploadArea = document.getElementById('uploadArea');
+        const uploadPreview = document.getElementById('uploadPreview');
+        const uploadContent = document.getElementById('uploadContent');
+        const uploadOverlay = document.getElementById('uploadOverlay');
         const fileInput = document.getElementById('fileInput');
+        const generateButton = document.getElementById('generateButton');
         const loading = document.getElementById('loading');
         const resultContainer = document.getElementById('resultContainer');
         const generatedImage = document.getElementById('generatedImage');
@@ -449,6 +649,39 @@
 
         // 初始化 API Key 输入框
         apiKeyInput.value = GEMINI_API_KEY;
+
+        // 初始化模板选择
+        function initTemplates() {
+            templatesContainer.innerHTML = '';
+            magazineTemplates.forEach(template => {
+                const templateCard = document.createElement('div');
+                templateCard.className = 'template-card';
+                templateCard.dataset.id = template.id;
+
+                templateCard.innerHTML = `
+                    <img src="${template.image}" alt="${template.name}" class="template-image">
+                    <div class="template-name">${template.name}</div>
+                `;
+
+                templateCard.addEventListener('click', () => {
+                    // 移除其他卡片的选中状态
+                    document.querySelectorAll('.template-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+
+                    // 添加选中状态
+                    templateCard.classList.add('selected');
+                    selectedTemplate = template;
+
+                    // 如果已上传图片，启用生成按钮
+                    if (uploadedFile) {
+                        generateButton.disabled = false;
+                    }
+                });
+
+                templatesContainer.appendChild(templateCard);
+            });
+        }
 
         // 打开 API Key 设置模态框
         apiKeyButton.addEventListener('click', () => {
@@ -520,10 +753,76 @@
             retryButton.style.display = 'none';
             uploadArea.style.display = 'flex';
             fileInput.value = '';
+            uploadedFile = null;
+            generateButton.disabled = true;
+            
+            // 重置上传区域显示
+            uploadPreview.style.display = 'none';
+            uploadPreview.style.width = 'auto';
+            uploadPreview.style.height = 'auto';
+            uploadContent.style.display = 'flex';
+            uploadOverlay.style.display = 'none';
+        });
+
+        // 生成按钮
+        generateButton.addEventListener('click', () => {
+            if (selectedTemplate && uploadedFile) {
+                generateCover();
+            }
         });
 
         // 处理文件上传
         async function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showError('请上传图片文件');
+                return;
+            }
+
+            uploadedFile = file;
+
+            // 如果已选择模板，启用生成按钮
+            if (selectedTemplate) {
+                generateButton.disabled = false;
+            }
+
+            // 显示预览图片
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    // 计算图片适合的尺寸
+                    const containerWidth = uploadArea.offsetWidth - 4; // 减去边框宽度
+                    const containerHeight = uploadArea.offsetHeight - 4;
+                    const imgAspectRatio = img.width / img.height;
+                    const containerAspectRatio = containerWidth / containerHeight;
+
+                    let displayWidth, displayHeight;
+
+                    if (imgAspectRatio > containerAspectRatio) {
+                        // 图片更宽，以宽度为准
+                        displayWidth = containerWidth;
+                        displayHeight = containerWidth / imgAspectRatio;
+                    } else {
+                        // 图片更高，以高度为准
+                        displayHeight = containerHeight;
+                        displayWidth = containerHeight * imgAspectRatio;
+                    }
+
+                    // 设置图片样式
+                    uploadPreview.style.width = displayWidth + 'px';
+                    uploadPreview.style.height = displayHeight + 'px';
+                    uploadPreview.src = e.target.result;
+                    uploadPreview.style.display = 'block';
+                    uploadContent.style.display = 'none';
+                    uploadOverlay.style.display = 'none';
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 生成封面
+        async function generateCover() {
             // 检查是否已设置 API Key
             if (!GEMINI_API_KEY) {
                 showError('请先设置 Gemini API Key！');
@@ -531,26 +830,24 @@
                 return;
             }
 
-            if (!file.type.startsWith('image/')) {
-                showError('请上传图片文件');
-                return;
-            }
-
             // 显示加载状态
             uploadArea.style.display = 'none';
+            generateButton.style.display = 'none';
             loading.style.display = 'block';
             errorMessage.style.display = 'none';
 
             try {
-                // 读取文件为Base64
-                const base64Image = await readFileAsBase64(file);
-                const mimeType = file.type;
+                // 读取模板图片为Base64
+                const templateBase64 = await loadImageAsBase64(selectedTemplate.image);
+
+                // 读取上传的图片为Base64
+                const userImageBase64 = await readFileAsBase64(uploadedFile);
 
                 // 调用 Gemini API
-                await generateCoverWithGemini(base64Image, mimeType);
+                await generateCoverWithGemini(templateBase64, userImageBase64);
 
             } catch (error) {
-                console.error('处理文件时出错:', error);
+                console.error('生成封面时出错:', error);
                 showError('生成封面时出错，请重试');
                 resetToUploadState();
             }
@@ -570,20 +867,50 @@
             });
         }
 
+        // 加载图片为Base64
+        function loadImageAsBase64(imagePath) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    // 转换为Base64
+                    const dataURL = canvas.toDataURL('image/jpeg');
+                    const base64String = dataURL.split(',')[1];
+                    resolve(base64String);
+                };
+                img.onerror = reject;
+                img.src = imagePath;
+            });
+        }
+
         // 使用 Gemini 生成封面
-        async function generateCoverWithGemini(base64Image, mimeType) {
+        async function generateCoverWithGemini(templateBase64, userImageBase64) {
             try {
                 // 构建请求
                 const prompt = [
                     {
-                        text: "请为这张图片生成一个小红书风格的封面。要求：1. 添加吸引眼球的标题文字；2. 使用时尚的排版；3. 添加小红书特有的标签和装饰元素；4. 整体风格年轻、活泼、有吸引力。"
-                    },
-                    {
-                        inlineData: {
-                            mimeType: mimeType,
-                            data: base64Image,
-                        },
-                    },
+                        parts: [
+                            { text: "Use the magazine cover [image 1] as a template. Replace its original subject and elements with the person and objects from [image 2]. The final image must retain the style, typography, composition, and the subject's pose from the template [image 1]." },
+                            {
+                                inline_data: {
+                                    mime_type: "image/png",
+                                    data: templateBase64,
+                                }
+                            },
+                            {
+                                inline_data: {
+                                    mime_type: "image/png",
+                                    data: userImageBase64,
+                                }
+                            }
+                        ]
+                    }
                 ];
 
                 // 调用 Gemini API
@@ -593,11 +920,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        contents: [
-                            {
-                                parts: prompt
-                            }
-                        ]
+                        contents: prompt
                     })
                 });
 
@@ -634,7 +957,7 @@
 
                 // 显示结果
                 if (hasImage) {
-                    generatedText.textContent = textContent || '这是为你生成的小红书封面！';
+                    generatedText.textContent = textContent || `这是根据${selectedTemplate.name}风格生成的小红书封面！`;
                     loading.style.display = 'none';
                     resultContainer.style.display = 'block';
                     retryButton.style.display = 'block';
@@ -669,6 +992,7 @@
             tempMessage.style.fontWeight = '500';
             tempMessage.style.zIndex = '1001';
             tempMessage.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+            tempMessage.style.transition = 'opacity 0.5s ease';
 
             if (type === 'error') {
                 tempMessage.style.backgroundColor = '#ff3b30';
@@ -681,9 +1005,10 @@
             // 3秒后移除
             setTimeout(() => {
                 tempMessage.style.opacity = '0';
-                tempMessage.style.transition = 'opacity 0.5s ease';
                 setTimeout(() => {
-                    document.body.removeChild(tempMessage);
+                    if (tempMessage.parentNode) {
+                        document.body.removeChild(tempMessage);
+                    }
                 }, 500);
             }, 3000);
         }
@@ -692,10 +1017,14 @@
         function resetToUploadState() {
             loading.style.display = 'none';
             uploadArea.style.display = 'flex';
+            generateButton.style.display = 'block';
+            generateButton.disabled = true;
         }
 
-        // 页面加载时检查 API Key
+        // 页面加载时初始化
         window.addEventListener('load', () => {
+            initTemplates();
+
             if (!GEMINI_API_KEY) {
                 showMessage('请先设置 Gemini API Key', 'error');
             }
